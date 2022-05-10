@@ -37,7 +37,8 @@
               <h3>Sign In</h3>
               <p class="mb-4">Lorem ipsum dolor sit amet elit. Sapiente sit aut eos consectetur adipisicing.</p>
             </div>
-            <form action="#" method="post">
+            <form action="." method="post">
+                {% csrf_token %}
               <div class="form-group first">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="username">
