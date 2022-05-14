@@ -9,8 +9,6 @@ def note_serializer(note) -> dict:
         'title': note.title,
         'message': note.message,
         'public': note.public,
-        'create_at': note.create_at,
-        'update_at': note.update_at,
     }
 
 

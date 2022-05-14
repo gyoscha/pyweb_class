@@ -37,9 +37,10 @@ class NoteDetailAPIView(APIView):
     def get(self, request: Request, pk) -> Response:
         note_data = get_object_or_404(Note, pk=pk)
 
-        serial = serializers.BlogSerializer(note_data)
+        # serial = serializers.BlogSerializer(note_data)
 
-        return Response(serial.data, status=status.HTTP_200_OK)
+        # return Response(serial.data, status=status.HTTP_200_OK)
+        return Response(serializers.note_serializer(note_data), status=status.HTTP_200_OK)
 
     def put(self, request: Request, pk) -> Response:
         note_data = get_object_or_404(Note, pk=pk)
@@ -47,6 +48,7 @@ class NoteDetailAPIView(APIView):
         note_data.message = request.data['message']
         note_data.save()
 
-        serial = serializers.BlogSerializer(note_data)
-
-        return Response(serial.data, status=status.HTTP_200_OK)
+        # serial = serializers.BlogSerializer(note_data)
+        #
+        # return Response(serial.data, status=status.HTTP_200_OK)
+        return Response(serializers.note_serializer(note_data), status=status.HTTP_200_OK)
