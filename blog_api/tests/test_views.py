@@ -5,6 +5,52 @@ from django.contrib.auth.models import User
 from blog.models import Note
 
 
+class TestPublicNoteListAPIView(APITestCase):
+    """
+    TESTS:
+    1. Получение пустого списка
+    2. Получение отфильтрованного списка записей (только public)
+    """
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create(username='test@test.ru', password='123456')
+
+    def test_empty_list_objects(self):
+        url = '/notes/public/'
+
+        resp = self.client.get(url)
+
+        # Проверка статус кода
+        expected_status_code = status.HTTP_200_OK
+        self.assertEqual(expected_status_code, resp.status_code)
+
+        # Проверка на получение пустого списка записей
+        response_data = resp.data
+        expected_data = []
+        self.assertEqual(expected_data, response_data)
+
+    def test_public_list_objects(self):
+        url = '/notes/public/'
+
+        Note.objects.create(title='TEST_title', message='TEST_msg', author_id=1, public=True)
+        Note.objects.create(title='TEST_title_2', message='TEST_msg_2', author_id=1, public=True)
+        Note.objects.create(title='TEST_title_3', message='TEST_msg_3', author_id=1, public=False)
+
+        resp = self.client.get(url)
+
+        # Проверка статус кода
+        expected_status_code = status.HTTP_200_OK
+        self.assertEqual(expected_status_code, resp.status_code)
+
+        # Проверка на получение списка записей
+        response_data = resp.data
+        expected_data = 2
+        self.assertEqual(expected_data, len(response_data))
+
+        for note in response_data:
+            self.assertTrue(note['public'])
+
+
 class TestNoteListCreateAPIView(APITestCase):
     """
     TESTS:
@@ -32,7 +78,7 @@ class TestNoteListCreateAPIView(APITestCase):
     def test_list_objects(self):
         url = '/notes/'
 
-        Note.objects.create(title='Test title')
+        Note.objects.create(title='Test title', message='Test_msg', author_id=1)
 
         resp = self.client.get(url)
 
@@ -52,7 +98,7 @@ class TestNoteListCreateAPIView(APITestCase):
         new_message = 'test_message'
         data = {
             'title': new_title,
-            'message': new_message
+            'message': new_message,
         }
 
         resp = self.client.post(url, data=data)
@@ -61,17 +107,7 @@ class TestNoteListCreateAPIView(APITestCase):
         self.assertEqual(expected_status_code, resp.status_code)
 
         self.assertTrue(Note.objects.get(pk=1))
-
-        new_title_2 = 'TEST'
-        new_message_2 = 'TEST_MSG'
-        data_2 = {
-            'title': new_title_2,
-            'message': new_message_2
-        }
-        resp = self.client.post(url, data=data_2)
-        expected_status_code = status.HTTP_201_CREATED
-        self.assertEqual(expected_status_code, resp.status_code)
-        self.assertTrue(Note.objects.get(pk=2))
+        self.assertFalse(Note.objects.get(pk=2))
 
 
 class TestNoteDetailAPIView(APITestCase):
@@ -86,7 +122,7 @@ class TestNoteDetailAPIView(APITestCase):
     @classmethod
     def setUpTestData(cls):
         User.objects.create(username='test@test.ru', password='123456')
-        Note.objects.create(title='TEST_title', message='TEST_msg')
+        Note.objects.create(title='TEST_title', message='TEST_msg', author_id=1)
 
     def test_retrieve_existing_object(self):
         pk = 1

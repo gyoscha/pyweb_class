@@ -2,33 +2,44 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 from django.shortcuts import get_object_or_404
 
 from blog.models import Note
 from . import serializers
 
 
+# выводим только опубликованные записи
+class PublicNoteListAPIView(ListAPIView):
+    queryset = Note.objects.all()   # Переопределяем данные
+    serializer_class = serializers.NoteSerializer   # Переопределяем сериалайзер
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(public=True)
+
+
 class NoteListCreateAPIView(APIView):
     def get(self, request: Request) -> Response:
         note = Note.objects.all()
-        return Response(
-            [serializers.note_serializer(word) for word in note],
-            status=status.HTTP_200_OK
+
+        serializer = serializers.NoteSerializer(
+            instance=note,
+            many=True,
         )
 
-    def post(self, request: Request) -> Response:
-        req = request.data
-        req_note = Note(**req)
-        req_note.save(force_insert=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # return Response(
-        #     serializers.note_serializer(req),
-        #     status=status.HTTP_201_CREATED
-        # )
-        serial = serializers.BlogSerializer(req)
+    def post(self, request: Request) -> Response:
+        serializer = serializers.NoteSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)   # Проверка на правильность введенных данных из request
+        serializer.save(author=request.user)
 
         return Response(
-            serial.data,
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 
