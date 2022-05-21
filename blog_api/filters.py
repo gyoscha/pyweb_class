@@ -6,3 +6,15 @@ def filter_notes_by_author_id(queryset, author_id):
     :return: Список записей этого автора
     """
     return queryset.filter(author_id=author_id)
+
+
+def filter_notes_by_username(queryset, username):
+    """
+    Фильтруем записи по username
+    :param queryset: записи
+    :param username: автор
+    :return: Список записей этого автора
+    """
+    return queryset.filter(author__username=username)
+
+

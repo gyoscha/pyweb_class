@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -6,7 +7,7 @@ from rest_framework.generics import ListAPIView
 from django.shortcuts import get_object_or_404
 
 from blog.models import Note
-from . import serializers
+from . import serializers, filters
 
 
 # выводим только опубликованные записи
@@ -17,6 +18,22 @@ class PublicNoteListAPIView(ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(public=True)
+
+
+class UserNoteListAPIView(APIView):
+    def get(self, request: Request, pk) -> Response:
+        user_data = get_object_or_404(User, pk=pk)
+
+        data = Note.objects.all()
+
+        data_filtered = filters.filter_notes_by_username(data, username=user_data)
+
+        serializer = serializers.NoteSerializer(
+            instance=data_filtered,
+            many=True,
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class NoteListCreateAPIView(APIView):
@@ -48,10 +65,11 @@ class NoteDetailAPIView(APIView):
     def get(self, request: Request, pk) -> Response:
         note_data = get_object_or_404(Note, pk=pk)
 
-        # serial = serializers.BlogSerializer(note_data)
+        serializer = serializers.NoteSerializer(
+            instance=note_data,
+        )
 
-        # return Response(serial.data, status=status.HTTP_200_OK)
-        return Response(serializers.note_serializer(note_data), status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request: Request, pk) -> Response:
         note_data = get_object_or_404(Note, pk=pk)
@@ -59,7 +77,28 @@ class NoteDetailAPIView(APIView):
         note_data.message = request.data['message']
         note_data.save()
 
-        # serial = serializers.BlogSerializer(note_data)
-        #
-        # return Response(serial.data, status=status.HTTP_200_OK)
-        return Response(serializers.note_serializer(note_data), status=status.HTTP_200_OK)
+        serializer = serializers.NoteSerializer(
+            instance=note_data,
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request: Request, pk) -> Response:
+        note_data = get_object_or_404(Note, pk=pk)
+
+        serializer = serializers.NoteSerializer(
+            instance=note_data,
+            data=request.data,
+            partial=True   # для частичного обновления данных
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request: Request, pk) -> Response:
+        note_data = get_object_or_404(Note, pk=pk)
+        note_data.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

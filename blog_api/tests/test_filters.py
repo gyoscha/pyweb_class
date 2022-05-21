@@ -25,3 +25,12 @@ class TestNoteFilter(TestCase):
         actual_queryset = filters.filter_notes_by_author_id(queryset, filter_author_id)
 
         self.assertQuerysetEqual(expected_queryset, actual_queryset)
+
+    def test_filter_notes_by_username(self):
+        username = 'user_1'
+        queryset = Note.objects.all()
+
+        expected_queryset = queryset.filter(author__username=username)
+        actual_queryset = filters.filter_notes_by_username(queryset, username)
+
+        self.assertQuerysetEqual(expected_queryset, actual_queryset)

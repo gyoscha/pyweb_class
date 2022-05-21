@@ -27,5 +27,5 @@ class BlogSerializer(serializers.Serializer):
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
-        fields = '__all__'
+        fields = 'id', 'title', 'message', 'public', 'author'
         read_only_fields = ('author', )
