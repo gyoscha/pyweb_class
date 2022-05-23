@@ -19,6 +19,19 @@ class PublicNoteListAPIView(ListAPIView):
         queryset = super().get_queryset()
         return queryset.filter(public=True)
 
+    def filter_queryset(self, queryset):
+        if 'year' in self.request.query_params:
+            queryset = filters.note_create_at__year_filter(
+                queryset,
+                year=self.request.query_params.get('year')
+            )
+        elif 'month' in self.request.query_params:
+            queryset = filters.note_update_at__month__gte_filter(
+                queryset,
+                month=self.request.query_params.get('month')
+            )
+        return queryset
+
 
 class UserNoteListAPIView(APIView):
     def get(self, request: Request, pk) -> Response:
