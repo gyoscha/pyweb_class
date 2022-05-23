@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.contrib.auth.models import User
 
-from blog.models import Note
+from blog.models import Note, Comment
 
 
 class TestPublicNoteListAPIView(APITestCase):
@@ -334,3 +334,68 @@ class TestUserNoteListAPIView(APITestCase):
         }
 
         self.assertDictEqual(expected_data, resp.data)
+
+
+class TestCommentNoteListCreateAPIView(APITestCase):
+    """
+    TESTS:
+    1. Получение пустого списка комментраев;
+    2. Получение списка  комментариев;
+    3. Создание комментария.
+    """
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create(username='test_1', password='1234567')
+
+        User.objects.create_user(username='test_2', password='1234567')
+
+    def test_empty_list_objects(self):
+        url = '/notes/comments/'
+        resp = self.client.get(url)
+
+        # Проверка статус кода
+        expected_status_code = status.HTTP_200_OK
+        self.assertEqual(expected_status_code, resp.status_code)
+
+        # Проверка на получение пустого списка
+        response_data = resp.data
+        expected_data = []
+        self.assertEqual(expected_data, response_data)
+
+    def test_list_objects(self):
+        url = '/notes/comments/'
+
+        Note.objects.create(title='TEST_title', message='TEST_msg', author_id=1)
+        Note.objects.create(title='TEST_title_2', message='TEST_msg_2', author_id=1)
+
+        Comment.objects.create(note_id=1, rating=3, author_id=1)
+
+        resp = self.client.get(url)
+
+        # Проверка статус кода
+        expected_status_code = status.HTTP_200_OK
+        self.assertEqual(expected_status_code, resp.status_code)
+
+        # Проверка на получение списка записей
+        response_data = resp.data
+        expected_data = 1
+        self.assertEqual(expected_data, len(response_data))
+
+    def test_create_objects(self):
+        url = '/notes/comments/'
+
+        Note.objects.create(title='TEST_title', message='TEST_msg', author_id=1)
+        Note.objects.create(title='TEST_title_2', message='TEST_msg_2', author_id=1)
+
+        data = {
+             "rating": 1,
+             "author": 1,
+             "note": 2
+        }
+
+        resp = self.client.post(url, data=data)
+
+        expected_status_code = status.HTTP_201_CREATED
+        self.assertEqual(expected_status_code, resp.status_code)
+
+        self.assertTrue(Note.objects.get(pk=1))

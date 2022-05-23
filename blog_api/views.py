@@ -3,11 +3,16 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView
 from django.shortcuts import get_object_or_404
 
-from blog.models import Note
+from blog.models import Note, Comment
 from . import serializers, filters
+
+
+class CommentNoteListCreateAPIView(ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = serializers.CommentPostSerializer
 
 
 # выводим только опубликованные записи
@@ -78,7 +83,7 @@ class NoteDetailAPIView(APIView):
     def get(self, request: Request, pk) -> Response:
         note_data = get_object_or_404(Note, pk=pk)
 
-        serializer = serializers.NoteSerializer(
+        serializer = serializers.NoteDetailSerializer(
             instance=note_data,
         )
 
@@ -90,7 +95,7 @@ class NoteDetailAPIView(APIView):
         note_data.message = request.data['message']
         note_data.save()
 
-        serializer = serializers.NoteSerializer(
+        serializer = serializers.NoteDetailSerializer(
             instance=note_data,
         )
 
@@ -99,7 +104,7 @@ class NoteDetailAPIView(APIView):
     def patch(self, request: Request, pk) -> Response:
         note_data = get_object_or_404(Note, pk=pk)
 
-        serializer = serializers.NoteSerializer(
+        serializer = serializers.NoteDetailSerializer(
             instance=note_data,
             data=request.data,
             partial=True   # для частичного обновления данных

@@ -23,5 +23,6 @@ urlpatterns = [
     path('notes/<int:pk>', views.NoteDetailAPIView.as_view()),
     path('notes/public/', views.PublicNoteListAPIView.as_view()),
     path('users/<int:pk>/notes/', views.UserNoteListAPIView.as_view()),
+    path('notes/comments/', views.CommentNoteListCreateAPIView.as_view()),
 
 ]
