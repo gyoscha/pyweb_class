@@ -33,4 +33,8 @@ class Comment(models.Model):
         default=RatingChoice.WITHOUT_RATING,
         verbose_name='Оценка'
     )
+    create_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время создания'
+    )
 
