@@ -25,7 +25,8 @@ class PublicNoteListAPIView(ListAPIView):
         # return queryset.filter(public=True)
         return queryset \
             .filter(public=True) \
-            .select_related("author")
+            .select_related('author') \
+            .prefetch_related('comments')
 
     def filter_queryset(self, queryset):
         if 'year' in self.request.query_params:

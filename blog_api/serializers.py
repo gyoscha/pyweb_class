@@ -3,6 +3,20 @@ from rest_framework import serializers
 from blog.models import Note, Comment
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField('get_rating')
+
+    def get_rating(self, obj: Comment):
+        return {
+            'value': obj.rating,
+            'display': obj.get_rating_display()
+        }
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+
 # Делал на практике сам 12.05.
 def note_serializer(note) -> dict:
     return {
@@ -37,11 +51,13 @@ class PublicListNoteSerializer(serializers.ModelSerializer):
         read_only=True  # поле для чтения
     )
 
+    comments = CommentSerializer(many=True, read_only=True)  # one-to-many-relationships
+
     class Meta:
         model = Note
         fields = (
             'title', 'message', 'create_at', 'update_at', 'public',  # из модели
-            'author',
+            'author', 'comments',  # из сериализатора
         )
 
 
@@ -49,20 +65,6 @@ class CommentPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    rating = serializers.SerializerMethodField('get_rating')
-
-    def get_rating(self, obj: Comment):
-        return {
-            'value': obj.rating,
-            'display': obj.get_rating_display()
-        }
-
-    class Meta:
-        model = Comment
-        fields = "__all__"
 
 
 class NoteDetailSerializer(serializers.ModelSerializer):
