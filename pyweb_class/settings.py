@@ -41,8 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    "debug_toolbar",
-
     'rest_framework',
 
     'test_app',
@@ -50,9 +48,13 @@ INSTALLED_APPS = [
     'login',
     'blog',
     'blog_api',
+
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'pyweb_class.urls'
@@ -164,4 +165,5 @@ LOGGING = {
 
 INTERNAL_IPS = [
     "127.0.0.1",
+    "localhost",
 ]
