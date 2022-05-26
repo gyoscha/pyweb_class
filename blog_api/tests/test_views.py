@@ -149,7 +149,8 @@ class TestNoteDetailAPIView(APITestCase):
             'title': 'TEST_title',
             'message': 'TEST_msg',
             'public': False,
-            'author': 1
+            'author': 1,
+            "comments": []
         }
 
         self.assertDictEqual(expected_data, resp.data)
@@ -187,7 +188,8 @@ class TestNoteDetailAPIView(APITestCase):
             'title': 'TEST_title_PUT',
             'message': 'TEST_msg_PUT',
             'public': False,
-            'author': 1
+            'author': 1,
+            "comments": []
         }
 
         self.assertDictEqual(expected_data, resp.data)
@@ -229,7 +231,8 @@ class TestNoteDetailAPIView(APITestCase):
             'title': 'TEST_title_patch',
             'message': 'TEST_msg_2',
             'public': False,
-            'author': 1
+            'author': 1,
+            "comments": []
         }
         self.assertDictEqual(expected_data, resp.data)
 
@@ -251,7 +254,8 @@ class TestNoteDetailAPIView(APITestCase):
             'title': 'TEST_title',
             'message': 'TEST_msg_patch',
             'public': False,
-            'author': 1
+            'author': 1,
+            "comments": []
         }
         self.assertDictEqual(expected_data, resp.data)
 

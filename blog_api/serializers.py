@@ -69,15 +69,15 @@ class CommentPostSerializer(serializers.ModelSerializer):
 
 class NoteDetailSerializer(serializers.ModelSerializer):
     """ Одна статья блога """
-    author = serializers.SlugRelatedField(
-        slug_field="username",  # указываем новое поле для отображения
-        read_only=True  # поле для чтения
-    )
+    # author = serializers.SlugRelatedField(
+    #     slug_field="username",  # указываем новое поле для отображения
+    #     read_only=True  # поле для чтения
+    # )
     comments = CommentSerializer(many=True, read_only=True)  # one-to-many-relationships
 
     class Meta:
         model = Note
         fields = (
-            'title', 'message', 'create_at', 'update_at', 'public',  # из модели
+            'id', 'title', 'message', 'public',  # из модели
             'author', 'comments',  # из сериализатора
         )
