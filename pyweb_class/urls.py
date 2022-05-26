@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('common.urls')),
     path('', include('login.urls')),
     path('', include('blog_api.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
