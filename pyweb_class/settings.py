@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'blog_api',
 
     'debug_toolbar',
+    'django_faker',
 ]
 
 MIDDLEWARE = [
