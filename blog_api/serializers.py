@@ -32,9 +32,17 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class PublicListNoteSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field="username",  # указываем новое поле для отображения
+        read_only=True  # поле для чтения
+    )
+
     class Meta:
         model = Note
-        fields = '__all__'
+        fields = (
+            'title', 'message', 'create_at', 'update_at', 'public',  # из модели
+            'author',
+        )
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
