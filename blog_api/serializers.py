@@ -31,6 +31,12 @@ class NoteSerializer(serializers.ModelSerializer):
         read_only_fields = ('author', )
 
 
+class PublicListNoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = '__all__'
+
+
 class CommentPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment

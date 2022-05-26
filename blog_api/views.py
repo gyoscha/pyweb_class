@@ -18,7 +18,7 @@ class CommentNoteListCreateAPIView(ListCreateAPIView):
 # выводим только опубликованные записи
 class PublicNoteListAPIView(ListAPIView):
     queryset = Note.objects.all()   # Переопределяем данные
-    serializer_class = serializers.NoteSerializer   # Переопределяем сериалайзер
+    serializer_class = serializers.PublicListNoteSerializer   # Переопределяем сериалайзер
 
     def get_queryset(self):
         queryset = super().get_queryset()
