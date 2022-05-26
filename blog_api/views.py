@@ -22,7 +22,10 @@ class PublicNoteListAPIView(ListAPIView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(public=True)
+        # return queryset.filter(public=True)
+        return queryset \
+            .filter(public=True) \
+            .select_related("author")
 
     def filter_queryset(self, queryset):
         if 'year' in self.request.query_params:
