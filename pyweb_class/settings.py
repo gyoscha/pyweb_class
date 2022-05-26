@@ -168,3 +168,6 @@ INTERNAL_IPS = [
     "127.0.0.1",
     "localhost",
 ]
+
+FAKER_LOCALE = None     # settings.LANGUAGE_CODE is loaded
+FAKER_PROVIDERS = None  # faker.DEFAULT_PROVIDERS is loaded (all)
